@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sim-Search: query all search engines, at the same time!</title>
+    <style>
+      body {
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript>Your browser does not support JavaScript!</noscript>
+
+    <b>You need to allow pop-ups and JavaScript</b> <br />
+    <input
+      id="query"
+      type="search"
+      spellcheck="true"
+      placeholder="Search anything..."
+    />
+    <br />
+
+    <button type="button" onclick="search()">Search</button>
+    <label
+      >Google
+      <input id="google" type="checkbox" />
+    </label>
+    <label
+      >DuckDuckGo
+      <input id="ddg" type="checkbox" />
+    </label>
+    <label
+      >Brave
+      <input id="brave" type="checkbox" />
+    </label>
+    <label
+      >Bing
+      <input id="bing" type="checkbox" />
+    </label>
+
+    <p>
+      License: CC BY-NC 4.0, in short you need to link back to original work and
+      mention original author and no commercial use of any derivative
+    </p>
+    <br />
+    <p>
+      Help me pay rent (2K EGP per month ~= 50 USD) and school expenses (10K EGP
+      per year ~= 200USD):
+      <a href="https://paypal.me/EyadBarany?country.x=EG&locale.x=en_US"
+        >https://paypal.me/EyadBarany?country.x=EG&locale.x=en_US</a
+      >
+    </p>
+    <br />
+    <p>
+      Contact: <br />
+      personal.esnosy@gmail.com <br />
+      dev.esnosy@gmail.com
+    </p>
+
+    <script>
+      const checkbox_id_to_search_url_func_map = new Map([
+        ["google", (q) => `https://www.google.com/search?q=${q}`],
+        ["ddg", (q) => `https://duckduckgo.com/?q=${q}`],
+        ["brave", (q) => `https://search.brave.com/search?q=${q}`],
+        ["bing", (q) => `https://www.bing.com/search?q=${q}`],
+      ]);
+
+      const checkboxes = Array.from(
+        document.getElementsByTagName("input")
+      ).filter((item) => item.type === "checkbox");
+
+      function get_local_storage_item_set_default(key, default_value) {
+        const value = localStorage.getItem(key);
+        if (value === null) {
+          localStorage.setItem(key, default_value);
+          return default_value;
+        }
+        return value;
+      }
+
+      for (const cb of checkboxes) {
+        cb.addEventListener("click", (e) => {
+          localStorage.setItem(cb.id, cb.checked ? "true" : "false");
+        });
+        cb.checked =
+          get_local_storage_item_set_default(cb.id, "true") === "true";
+      }
+
+      function search() {
+        query = document.getElementById("query").value;
+        if (query === "") {
+          alert("Please type something in the search box");
+          return;
+        }
+        for (const cb of checkboxes)
+          if (cb.checked)
+            window.open(checkbox_id_to_search_url_func_map.get(cb.id)(query));
+      }
+    </script>
+  </body>
+</html>
